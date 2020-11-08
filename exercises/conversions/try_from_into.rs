@@ -11,8 +11,6 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need create implementation for a tuple of three integer,
@@ -25,19 +23,63 @@ struct Color {
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        if tuple.0 < 0
+            || tuple.0 > 255
+            || tuple.1 < 0
+            || tuple.1 > 255
+            || tuple.2 < 0
+            || tuple.2 > 255
+        {
+            Err("Out of range".to_string())
+        } else {
+            Ok(Color {
+                red: tuple.0.try_into().unwrap(),
+                green: tuple.1.try_into().unwrap(),
+                blue: tuple.2.try_into().unwrap(),
+            })
+        }
+    }
 }
 
 // Array implementation
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        if arr[0] < 0 || arr[0] > 255 || arr[1] < 0 || arr[1] > 255 || arr[2] < 0 || arr[2] > 255 {
+            Err("Out of range".to_string())
+        } else {
+            Ok(Color {
+                red: arr[0].try_into().unwrap(),
+                green: arr[1].try_into().unwrap(),
+                blue: arr[2].try_into().unwrap(),
+            })
+        }
+    }
 }
 
 // Slice implementation
 impl TryFrom<&[i16]> for Color {
     type Error = String;
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            Err("slice error".to_string())
+        } else if slice[0] < 0
+            || slice[0] > 255
+            || slice[1] < 0
+            || slice[1] > 255
+            || slice[2] < 0
+            || slice[2] > 255
+        {
+            Err("Out of range".to_string())
+        } else {
+            Ok(Color {
+                red: slice[0].try_into().unwrap(),
+                green: slice[1].try_into().unwrap(),
+                blue: slice[2].try_into().unwrap(),
+            })
+        }
+    }
 }
 
 fn main() {
@@ -88,17 +130,17 @@ mod tests {
     }
     #[test]
     fn test_array_out_of_range_positive() {
-        let c: Color = [1000, 10000, 256].try_into();
+        let c: Result<Color, String> = [1000, 10000, 256].try_into();
         assert!(c.is_err());
     }
     #[test]
     fn test_array_out_of_range_negative() {
-        let c: Color = [-10, -256, -1].try_into();
+        let c: Result<Color, String> = [-10, -256, -1].try_into();
         assert!(c.is_err());
     }
     #[test]
     fn test_array_sum() {
-        let c: Color = [-1, 255, 255].try_into();
+        let c = Color::try_from([-1, 255, 255]);
         assert!(c.is_err());
     }
     #[test]
